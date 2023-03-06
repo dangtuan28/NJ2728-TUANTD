@@ -1,0 +1,7 @@
+POST http://localhost:9000/categories HTTP/1.1
+content-type: application/json
+
+{
+   "name": "Samsung Fold 38",
+   " description": " Do choi ban ca"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "basic-examples",
+  "version": "1.0.0",
+  "description": "For training",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tran Dang Tuan",
+  "license": "ISC"
+}

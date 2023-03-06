@@ -1,0 +1,8 @@
+PATCH  http://localhost:9000/categories/1 HTTP/1.1
+content-type: application/json
+
+{
+   " description": " Do choi ne kkk",
+   "name": "Samsung Fold 5"
+   
+}

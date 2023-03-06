@@ -1,0 +1,10 @@
+PATCH  http://localhost:9000/suppliers/3 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Tran Dang Tuan",
+    "email": "Tuantd2812@gmail.com",
+    "PhoneNumber": "0905843460",
+    "Address": "29 Ho Xuan Huong",
+    "id": 3
+  }

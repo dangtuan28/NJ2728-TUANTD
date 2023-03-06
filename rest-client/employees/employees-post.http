@@ -1,0 +1,11 @@
+POST  http://localhost:9000/employees HTTP/1.1
+content-type: application/json
+
+    {
+    "FirstName": "Tran Dang",
+    "LastName":"Tuan",
+    "PhoneNumber":"0905843460",
+    "Address":"38 Yen Bai",
+    "Email": "tuantd@gmail.com",
+    "Birthday":"2002-12-28"
+  } 

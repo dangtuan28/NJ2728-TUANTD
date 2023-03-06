@@ -1,0 +1,9 @@
+POST http://localhost:9000/suppliers HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Tran Dang Tuan",
+    "email": "Tuantd@gmail.com",
+    "PhoneNumber": "0905843460",
+    "Address": "38 Yen Bai"
+}
