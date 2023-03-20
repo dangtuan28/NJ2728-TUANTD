@@ -1,16 +1,17 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
 //import
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var productsRouter = require('./routes/products');
-var categoriesRouter = require('./routes/categories');
-var customersRouter = require('./routes/customers');
-var suppliersRouter = require('./routes/suppliers');
-var employeesRouter = require('./routes/employees');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const productsRouter = require('./routes/products');
+const categoriesRouter = require('./routes/categories');
+const customersRouter = require('./routes/customers');
+const suppliersRouter = require('./routes/suppliers');
+const employeesRouter = require('./routes/employees');
 
 
 var app = express();
@@ -24,6 +25,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+  cors({
+    origin: '*',
+  }),
+);
 //REGISTER ROUTERS
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
