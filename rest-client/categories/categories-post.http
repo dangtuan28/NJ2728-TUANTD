@@ -3,6 +3,5 @@ content-type: application/json
 
 {
     "name": "Laptop",
-    
     "description": "May Tinh"
 }

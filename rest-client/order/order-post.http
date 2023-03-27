@@ -1,0 +1,13 @@
+POST http://localhost:9000/orders HTTP/1.1
+content-type: application/json
+
+{ 
+   "orderDetails": [
+      {
+         "productId": "641d6034b021ff426684ed95",
+         "price": 100,
+         "discount": 10,
+         "quantity": 1
+      }
+   ]
+}

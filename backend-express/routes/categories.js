@@ -1,21 +1,23 @@
 const yup = require("yup");
 const express = require("express");
 const router = express.Router();
+const { Category } = require('../models/index');
+const ObjectId = require('mongodb').ObjectId;
 
-const { write } = require("../helpers/FileHelper");
+/* const { write } = require("../helpers/FileHelper");
 let data = require("../data/categories.json");
 
-const fileName = "./data/categories.json";
+const fileName = "./data/categories.json"; */
 
 // let  data = [
 //   { id: 1, name: "Mobile Phone", description: "Điện thoại" },
 //   { id: 2, name: "Fashion", description: "Thời trang" },
 //   { id: 3, name: "Toys", description: "Đồ chơi cho trẻ em" },
 // ];
-router.get("/", function (req, res, next) {
+/* router.get("/", function (req, res, next) {
   res.send(data);
-});
-router.get("/:id", function (req, res, next) {
+}); */
+/* router.get("/:id", function (req, res, next) {
   const validationSchema = yup.object().shape({
     params: yup.object({
       id: yup.number(),
@@ -42,10 +44,10 @@ router.get("/:id", function (req, res, next) {
           provider: "yup",
         });
     });
-});
+}); */
 
 //create
-router.post("/", function (req, res, next) {
+/* router.post("/", function (req, res, next) {
   // Validate
   const validationSchema = yup.object({
     body: yup.object({
@@ -82,7 +84,72 @@ router.post("/", function (req, res, next) {
         .status(400)
         .json({ type: err.name, errors: err.errors, provider: "yup" });
     });
+}); */
+router.get('/', async (req, res, next) => {
+  try {
+    let results = await Category.find();
+    res.send(results);
+  } catch (err) {
+    res.sendStatus(500);
+  }
 });
+
+router.get('/:id', async function (req, res, next) {
+  // Validate
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
+
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      const id = req.params.id;
+
+      let found = await Category.findById(id);
+
+      if (found) {
+        return res.send({ ok: true, result: found });
+      }
+
+      return res.send({ ok: false, message: 'Object not found' });
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
+});
+
+// Create new data
+router.post('/', async function (req, res, next) {
+  // Validate
+  const validationSchema = yup.object({
+    body: yup.object({
+      name: yup.string().required(),
+      description: yup.string(),
+    }),
+  });
+
+  validationSchema
+    .validate({ body: req.body }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const data = req.body;
+        const newItem = new Category(data);
+        let result = await newItem.save();
+
+        return res.send({ ok: true, message: 'Created', result });
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, provider: 'yup' });
+    });
+});
+
 
 router.delete("/:id", function (req, res, next) {
   const id = req.params.id;

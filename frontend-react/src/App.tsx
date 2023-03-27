@@ -12,11 +12,11 @@ import Products from './Pages/Products/indexProducts';
 function App() {
   return (
     <div>
-     {/* <Categories/> */}
+     <Categories/>
      {/* < Customers/> */}
      {/* <Employees/> */}
     {/* <Suppliers/> */}
-    <Products/>
+    {/* <Products/> */}
     </div>
   );
 }

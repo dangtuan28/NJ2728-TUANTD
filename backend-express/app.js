@@ -4,6 +4,11 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+
+// MONGOOSE
+const { default: mongoose } = require('mongoose');
+const { CONNECTION_STRING } = require('./constants/dbSettings');
+
 //import
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -12,6 +17,7 @@ const categoriesRouter = require('./routes/categories');
 const customersRouter = require('./routes/customers');
 const suppliersRouter = require('./routes/suppliers');
 const employeesRouter = require('./routes/employees');
+const ordersRouter = require('./routes/orders');
 
 
 var app = express();
@@ -25,11 +31,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(
   cors({
     origin: '*',
   }),
 );
+
+// MONGOOSE
+mongoose.set('strictQuery', false);
+mongoose.connect(CONNECTION_STRING);
+
 //REGISTER ROUTERS
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -38,6 +50,7 @@ app.use('/categories', categoriesRouter);
 app.use('/customers', customersRouter);
 app.use('/suppliers', suppliersRouter);
 app.use('/employees', employeesRouter);
+app.use('/orders', ordersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
