@@ -1,11 +1,16 @@
 const yup = require('yup');
 const express = require("express");
+const passport = require('passport');
 const router = express.Router();
 // const { write } = require('../helpers/FileHelper');
 // let data = require('../data/employees.json');
 // const Employee = require('../models/Employee');
 const { Employee } = require('../models/index');
 const ObjectId = require('mongodb').ObjectId;
+const encodeToken = require('../helpers/jwtHelper');
+const { validateSchema, loginSchema, categorySchema } = require('../validation/employee');
+
+
 
 // const fileName = './data/employees.json';
 // router.get("/", function (req, res, next) {
@@ -83,6 +88,44 @@ const ObjectId = require('mongodb').ObjectId;
 //         .json({ type: err.name, errors: err.errors, provider: "yup" });
 //     });
 // });
+
+router.post('/login', validateSchema(loginSchema), passport.authenticate('local', {session: false}), async (req, res, next) => {
+  try {
+    const { _id, email, firstName, lastName} = req.user;
+
+    const token = encodeToken(_id, email, firstName, lastName);
+
+    res.status(200).json({
+      token,
+      payload: req.user,
+    });
+  } catch (err) {
+    res.status(401).json({
+      statusCode: 401,
+      message: 'Unauthorized',
+    });
+  }
+});
+
+router.get('/profile',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res, next) => {
+    try {
+      console.log('req.user', req.user)
+
+      const employee = await Employee.findById(req.user._id);
+
+      if (!employee) return res.status(404).send({ message: 'Not found' });
+
+      res.status(200).json(employee);
+    } catch (err) {
+      res.sendStatus(500);
+    }
+  },
+);
+
+
+
 router.get('/', async (req, res, next) => {
   try {
     let results = await Employee.find();

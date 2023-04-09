@@ -4,11 +4,14 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
+const passport = require('passport');
+
+
 
 // MONGOOSE
 const { default: mongoose } = require('mongoose');
 const { CONNECTION_STRING } = require('./constants/dbSettings');
-
+const { passportConfig, passportConfigLocal } = require('./middlewares/passport');
 //import
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -18,6 +21,7 @@ const customersRouter = require('./routes/customers');
 const suppliersRouter = require('./routes/suppliers');
 const employeesRouter = require('./routes/employees');
 const ordersRouter = require('./routes/orders');
+const questionsRouter = require('./routes/questions');
 
 
 var app = express();
@@ -42,6 +46,8 @@ app.use(
 mongoose.set('strictQuery', false);
 mongoose.connect(CONNECTION_STRING);
 
+passport.use(passportConfig);
+passport.use(passportConfigLocal);
 //REGISTER ROUTERS
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -51,6 +57,7 @@ app.use('/customers', customersRouter);
 app.use('/suppliers', suppliersRouter);
 app.use('/employees', employeesRouter);
 app.use('/orders', ordersRouter);
+app.use('/questions', questionsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
