@@ -11,6 +11,8 @@ const passport = require('passport');
 // MONGOOSE
 const { default: mongoose } = require('mongoose');
 const { CONNECTION_STRING } = require('./constants/dbSettings');
+
+
 const { passportConfig, passportConfigLocal } = require('./middlewares/passport');
 //import
 const indexRouter = require('./routes/index');
@@ -22,7 +24,7 @@ const suppliersRouter = require('./routes/suppliers');
 const employeesRouter = require('./routes/employees');
 const ordersRouter = require('./routes/orders');
 const questionsRouter = require('./routes/questions');
-
+const uploadRouter = require('./routes/upload');
 
 var app = express();
 
@@ -59,6 +61,10 @@ app.use('/employees', employeesRouter);
 app.use('/orders', ordersRouter);
 app.use('/questions', questionsRouter);
 
+app.use('/upload', uploadRouter);
+app.get('/chat', (req, res) => {
+  res.sendFile(__dirname + '/index.html')
+})
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

@@ -1,0 +1,42 @@
+# GET http://localhost:9000/questions/1a?discount=10 HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/1b?discount=10 HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/2a?stock=10  HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/2a?stock=10  HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/4?address=38 Yen Ba HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/7?status=WAITING HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/25 HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/26a HTTP/1.1
+# content-type: application/json
+
+# GET http://localhost:9000/questions/26c??fromDate=2023-03-27&toDate=2023-03-29 HTTP/1.1
+# content-type: application/json
+
+GET http://localhost:9000/questions/11?paymentType=CREDIT CARD HTTP/1.1
+content-type: application/json
+
+
+# GET http://localhost:9000/questions/6?birthday=now HTTP/1.1
+# content-type: application/json
+
+ 
+
+
+# GET http://localhost:9000/questions/8b?fromDate=2023-03-09&toDate=2023-03-24&status=COMPLETED HTTP/1.1
+# content-type: application/json  
+
+# GET http://localhost:9000/questions/15?name=Apple HTTP/1.1
+# content-type: application/json

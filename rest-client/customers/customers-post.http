@@ -4,9 +4,9 @@ content-type: application/json
 
  {
     "firstName": "Tran ",
-    "lastName":"Tuan",
+    "lastName":"Khach Hang7",
     "phoneNumber":"0931932039",
     "address":"38 Yen Bai",
     "email": "tuantd@gmail.com",
-    "birthday":"2002-12-28"
+    "birthday":"2023-3-30"
   } 

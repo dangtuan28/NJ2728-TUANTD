@@ -4,10 +4,18 @@ content-type: application/json
 { 
    "orderDetails": [
       {
-         "productId": "641d6034b021ff426684ed95",
+         "productId": "64285c94769a3dd95208c974",
          "price": 100,
          "discount": 10,
          "quantity": 1
       }
-   ]
+   ],
+   "createdDate": "2023-02-02",
+   "shippedDate": "2023-05-05",
+   "paymentType": "CREDIT CARD",
+   "shippingAddress": "VietNam",
+   "status": "WAITING",
+   "description": "Iphone 13",
+   "customerId": "64290ea02fef3b223e0bb11e",
+   "employeeId": "642ad90d4bab5de867349554"
 }

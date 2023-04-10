@@ -1348,12 +1348,7 @@ router.get("/34", async function (req, res, next) {
       .match({
         $expr: { $and: [compareFromDate, compareToDate] },
       })
-      // .lookup({
-      //   from: 'products',
-      //   localField: 'orderDetails.productId',
-      //   foreignField: '_id',
-      //   as: 'orderDetails.products',
-      // })
+     
       .unwind("orderDetails")
       .addFields({
         originalPrice: {

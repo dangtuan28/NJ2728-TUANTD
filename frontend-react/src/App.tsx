@@ -1,23 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
 import 'antd/dist/reset.css';
+import './App.css';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Layout, Menu } from 'antd';
+
 import Categories from './Pages/Categories';
-import Customers from './Pages/Customers/indexCustomers';
-import Employees from './Pages/Employees/indexEmployess';
-import Suppliers from './Pages/Suppliers/indexSuppliers';
 import Products from './Pages/Products/indexProducts';
+import Home from './Pages/Home';
+import NavigationBar from './components/NavigationBar';
+
+import numeral from 'numeral';
+import 'numeral/locales/vi';
+
+const { Header, Footer, Sider, Content } = Layout;
+
+const headerStyle: React.CSSProperties = {
+  backgroundColor: '#001529',
+};
+
+const contentStyle: React.CSSProperties = {
+  minHeight: '100vh',
+  backgroundColor: '#ffffff',
+};
+
+const footerStyle: React.CSSProperties = {
+  textAlign: 'center',
+  color: '#fff',
+  backgroundColor: '#7dbcea',
+};
+
+numeral.locale('vi');
 
 function App() {
   return (
-    <div>
-     <Categories/>
-     {/* < Customers/> */}
-     {/* <Employees/> */}
-    {/* <Suppliers/> */}
-    {/* <Products/> */}
-    </div>
+    <BrowserRouter>
+      <Layout>
+        <Header style={headerStyle}>
+          <NavigationBar />
+        </Header>
+        <Content style={contentStyle}>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/categories' element={<Categories />} />
+            <Route path='/products' element={<Products />} />
+          </Routes>
+        </Content>
+        <Footer style={footerStyle}>Footer</Footer>
+      </Layout>
+    </BrowserRouter>
   );
 }
 

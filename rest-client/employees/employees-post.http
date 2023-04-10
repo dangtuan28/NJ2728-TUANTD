@@ -2,10 +2,11 @@ POST  http://localhost:9000/employees HTTP/1.1
 content-type: application/json
 
     {
-    "firstName": "Tran Dang",
-    "lastName":"Tuan",
+    "firstName": "Tran ",
+    "lastName":"Nhan Vien10",
     "phoneNumber":"0905843460",
     "address":"38 Yen Bai",
-    "email": "tuantd@gmail.com",
+    "password":"1234",
+    "email": "nhanvien10@gmail.com",
     "birthday":"2002-12-28"
   } 
