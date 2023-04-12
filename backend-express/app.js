@@ -60,8 +60,8 @@ app.use('/suppliers', suppliersRouter);
 app.use('/employees', employeesRouter);
 app.use('/orders', ordersRouter);
 app.use('/questions', questionsRouter);
-
 app.use('/upload', uploadRouter);
+
 app.get('/chat', (req, res) => {
   res.sendFile(__dirname + '/index.html')
 })

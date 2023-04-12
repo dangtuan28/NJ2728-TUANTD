@@ -9,6 +9,7 @@ const {
   findDocument,
   toSafeFileName,
   insertDocument,
+  insertDocuments
 } = require('../helpers/MongoDbHelper');
 const { isValidObjectId } = require('mongoose');
 
@@ -20,7 +21,7 @@ const upload = multer({
     destination: function (req, file, callback) {
       // const { id, collectionName } = req.params;
 
-      const PATH = `${UPLOAD_DIRECTORY}/media/${file.fieldname}`;
+      const PATH = `${UPLOAD_DIRECTORY}/media/${file.filename}`;
       // console.log('PATH', PATH);
       if (!fs.existsSync(PATH)) {
         // Create a directory
@@ -33,25 +34,74 @@ const upload = multer({
       callback(null, safeFileName);
     },
   }),
-}).single('file');
-
-router.post('/create', async (req, res, next) =>
-upload(req, res, async (err) => {
-  if (err instanceof multer.MulterError) {
-    res.status(500).json({ type: 'MulterError', err: err });
-  } else if (err) {
-    res.status(500).json({ type: 'UnknownError', err: err });
-  } else {
-    const imageUrl = `/uploads/media/${req.file.filename}`;
-    const name = req.file.filename;
-
-    const result = await insertDocument({ location: imageUrl, name}, 'Media')
-    res.status(200).json({ ok: true, });
-  }
 })
-);
+// .single('file');
+
+// router.post('/create', async (req, res, next) =>
+// upload(req, res, async (err) => {
+//   if (err instanceof multer.MulterError) {
+//     res.status(500).json({ type: 'MulterError', err: err });
+//   } else if (err) {
+//     res.status(500).json({ type: 'UnknownError', err: err });
+//   } else {
+//     const imageUrl = `/uploads/media/${req.file.filename}`;
+//     const name = req.file.filename;
+
+//     const result = await insertDocument({ location: imageUrl, name}, 'Media')
+//     res.status(200).json({ ok: true, payload: result });
+//   }
+// })
+// );
 
 // http://127.0.0.1:9000/upload/media/63293fea50d2f78624e0c6f3/image
+router.post('/upload-single', (req, res) =>
+  upload.single('file')(req, res, async (err) => {
+    try {
+      if (err instanceof multer.MulterError) {
+        res.status(500).json({ type: 'MulterError', err: err });
+      } else if (err) {
+        res.status(500).json({ type: 'UnknownError', err: err });
+      } else {
+        const imageUrl = `/uploads/media/${req.file.filename}`;
+        const name = req.file.filename;
+
+        const response = await insertDocument(
+          { location: imageUrl, name },
+          'Media',
+        );
+        res.status(200).json({ ok: true, payload: response });
+      }
+    } catch (error) {
+      res.status(500).json({ ok: false, error });
+    }
+  }),
+);
+
+router.post('/upload-multiple', (req, res) =>
+  upload.array('files', 3)(req, res, async (err) => {
+    try {
+      if (err instanceof multer.MulterError) {
+        res.status(500).json({ type: 'MulterError', err: err });
+      } else if (err) {
+        res.status(500).json({ type: 'UnknownError', err: err });
+      } else {
+        const files = req.files;
+
+        const dataInsert = files.reduce((prev, nextP) => {
+          prev.push({ name: nextP.filename, location: nextP.path });
+          return prev;
+        }, []);
+
+        const response = await insertDocuments(dataInsert, 'Media');
+
+        res.status(200).json({ ok: true, payload: response });
+      }
+    } catch (error) {
+      res.status(500).json({ ok: false, error });
+    }
+  }),
+);
+
 router.post('/:collectionName/:id/image', async (req, res, next) => {
   const { collectionName, id } = req.params;
 
@@ -83,6 +133,7 @@ router.post('/:collectionName/:id/image', async (req, res, next) => {
     }
   });
 });
+
 
 // http://127.0.0.1:9000/upload/media/63293fea50d2f78624e0c6f3/images
 // router.post('/:collectionName/:id/images', async (req, res, next) => {
