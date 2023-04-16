@@ -1,8 +1,7 @@
-
 const yup = require('yup');
 const express = require('express');
 const router = express.Router();
-const { Product } = require('../models/index');
+const { Product, Category, Supplier } = require('../models');
 const ObjectId = require('mongodb').ObjectId;
 
 // Methods: POST / PATCH / GET / DELETE / PUT
@@ -11,15 +10,25 @@ const ObjectId = require('mongodb').ObjectId;
 // Get all
 router.get('/', async (req, res, next) => {
   try {
-    let results = await Product.find().populate('category').populate('supplier').lean({ virtuals: true });
+    const { category, q } = req.query;
+    const conditionFind = {};
+    if (category) {
+      conditionFind.category = category;
+    }
+
+    console.log('««««« conditionFind »»»»»', conditionFind);
+
+    let results = await Product.find(conditionFind).populate('category').populate('supplier').lean({ virtuals: true });
 
     res.json(results);
   } catch (error) {
+    console.log('««««« error »»»»»', error);
     res.status(500).json({ ok: false, error });
   }
 });
-router.get('/:id', async function (req, res, next) {
-  // Validate
+
+// Get by id
+router.get('/:id', async (req, res, next) => {
   const validationSchema = yup.object().shape({
     params: yup.object({
       id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
@@ -27,23 +36,23 @@ router.get('/:id', async function (req, res, next) {
       }),
     }),
   });
+  
 
-  validationSchema
-    .validate({ params: req.params }, { abortEarly: false })
-    .then(async () => {
-      const id = req.params.id;
+  validationSchema.validate({ params: req.params }, { abortEarly: false })
+  .then(async () => {
+    const { id } = req.params;
 
-      let found = await Product.findById(id);
+    let results = await Product.findById(id).populate('category').populate('supplier').lean({ virtuals: true });
 
-      if (found) {
-        return res.send({ ok: true, result: found });
-      }
+    if (results) {
+      return res.send({ ok: true, result: results });
+    }
 
-      return res.send({ ok: false, message: 'Object not found' });
-    })
-    .catch((err) => {
-      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
-    });
+    return res.send({ ok: false, message: 'Object not found' });
+  })
+  .catch((err) => {
+    return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+  });
 });
 
 // ------------------------------------------------------------------------------------------------
@@ -74,6 +83,13 @@ router.post('/', function (req, res, next) {
     .validate({ body: req.body }, { abortEarly: false })
     .then(async () => {
       const data = req.body;
+
+      // let category = await Category.findOne({ _id: data.categoryId });
+      // if (!category) return res.status(404).json({ message: 'Not found' });
+
+      // let supplier = await Supplier.findOne({ _id: data.supplierId });
+      // if (!supplier) return res.status(404).json({ message: 'Not found' });
+
       let newItem = new Product(data);
       await newItem.save();
       res.send({ ok: true, message: 'Created', result: newItem });
@@ -82,41 +98,48 @@ router.post('/', function (req, res, next) {
       return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
     });
 });
-
 // ------------------------------------------------------------------------------------------------
 // Delete data
 router.delete('/:id', function (req, res, next) {
-  const id = req.params.id;
-  data = data.filter((x) => x.id != id);
+  const validationSchema = yup.object().shape({
+    params: yup.object({
+      id: yup.string().test('Validate ObjectID', '${path} is not valid ObjectID', (value) => {
+        return ObjectId.isValid(value);
+      }),
+    }),
+  });
 
-  res.send({ ok: true, message: 'Deleted' });
+  validationSchema
+    .validate({ params: req.params }, { abortEarly: false })
+    .then(async () => {
+      try {
+        const id = req.params.id;
+
+        let found = await Product.findByIdAndDelete(id);
+
+        if (found) {
+          return res.send({ ok: true, result: found });
+        }
+
+        return res.status(410).send({ ok: false, message: 'Object not found' });
+      } catch (err) {
+        return res.status(500).json({ error: err });
+      }
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
 });
 
-router.patch('/:id', function (req, res, next) {
-  const id = req.params.id;
-  const patchData = req.body;
-
-  let found = data.find((x) => x.id == id);
-
-  if (found) {
-    for (let propertyName in patchData) {
-      found[propertyName] = patchData[propertyName];
-    }
+router.patch('/:id', async function (req, res, next) {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    await Product.findByIdAndUpdate(id, data);
+    res.send({ ok: true, message: 'Updated' });
+  } catch (error) {
+    res.status(500).send({ ok: false, error });
   }
-
-  res.send({ ok: true, message: 'Updated' });
-});
-
-// ------------------------------------------------------------------------------------------------
-// Search
-router.get('/search', function (req, res, next) {
-  res.send('This is search router of products');
-});
-
-// ------------------------------------------------------------------------------------------------
-// details
-router.get('/details', function (req, res, next) {
-  res.send('This is details router of products');
 });
 
 module.exports = router;

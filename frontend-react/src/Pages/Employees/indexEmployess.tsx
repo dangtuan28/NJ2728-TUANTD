@@ -27,7 +27,7 @@ const columns: ColumnsType<any> = [
   },
   {
     title: 'FirstName',
-    dataIndex: 'FirstName',
+    dataIndex: 'firstName',
     key: 'firstname',
     render: (text, record, index) => {
       return <strong style={{ color: '#fab1a0' }}>{text}</strong>
@@ -35,7 +35,7 @@ const columns: ColumnsType<any> = [
   },
   {
     title: 'LastName',
-    dataIndex: 'LastName',
+    dataIndex: 'lastName',
     key: 'lastname',
     render: (text, record, index) => {
       return <strong style={{ color: '#fab1a0' }}>{text}</strong>
@@ -43,25 +43,25 @@ const columns: ColumnsType<any> = [
   },
   {
     title: 'PhoneNumber',
-    dataIndex: 'PhoneNumber',
+    dataIndex: 'phoneNumber',
     key: 'phonenumber',
 
   },
   {
     title: 'Address',
-    dataIndex: 'Address',
+    dataIndex: 'address',
     key: 'address',
 
   },
   {
     title: 'Email',
-    dataIndex: 'Email',
+    dataIndex: 'email',
     key: 'email',
 
   },
   {
     title: 'Birthday',
-    dataIndex: 'Birthday',
+    dataIndex: 'birthday',
     key: 'birthday',
 
   },

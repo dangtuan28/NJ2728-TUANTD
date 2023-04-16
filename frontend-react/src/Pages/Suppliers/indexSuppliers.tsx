@@ -41,13 +41,13 @@ const columns: ColumnsType<any> = [
   },
   {
     title: 'PhoneNumber',
-    dataIndex: 'PhoneNumber',
+    dataIndex: 'phoneNumber',
     key: 'phonenumber',
 
   },
   {
     title: 'Address',
-    dataIndex: 'Address',
+    dataIndex: 'address',
     key: 'address',
 
   },

@@ -7,6 +7,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import numeral from 'numeral';
 
+
 const apiName = '/products';
 
 export default function Categories() {
@@ -25,28 +26,31 @@ export default function Categories() {
   const onSelectCategoryFilter = useCallback((e: any) => {
     setCategory(e.target.value);
   }, []);
+  const onSelectSupplierFilter = useCallback((e: any) => {
+    setSupplier(e.target.value);
+  }, []);
 
   const callApi = useCallback((searchParams: any) => {
     axios
-    .get(`${apiName}${`?${searchParams.toString()}`}`)
-    .then((response) => {
-      const { data } = response;
-      setItems(data);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+      .get(`${apiName}${`?${searchParams.toString()}`}`)
+      .then((response) => {
+        const { data } = response;
+        setItems(data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }, []);
 
   const onSearch = useCallback(() => {
-    let filters: { category: any} = {
+    let filters: { category: any } = {
       category,
     };
-    
+
     const searchParams: URLSearchParams = new URLSearchParams(filters);
 
     callApi(searchParams);
-  } , [callApi, category]);
+  }, [callApi, category,]);
 
   const columns: ColumnsType<any> = [
     {
@@ -64,7 +68,11 @@ export default function Categories() {
       dataIndex: 'category.name',
       key: 'category.name',
       render: (text, record, index) => {
-        return <span>{record.category.name}</span>;
+        return (
+          <div style={{ whiteSpace: 'nowrap' }}>
+            <span>{record.category?.name}</span>
+          </div>
+        );
       },
     },
     {
@@ -203,7 +211,7 @@ export default function Categories() {
         createForm.resetFields();
         message.success('Thêm mới danh mục thành công!', 1.5);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const onUpdateFinish = (values: any) => {
@@ -215,7 +223,7 @@ export default function Categories() {
         message.success('Cập nhật thành công!', 1.5);
         setOpen(false);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   return (
@@ -324,17 +332,21 @@ export default function Categories() {
       </div>
       {/* TABLE */}
 
-      <div style={{ background: 'red'}}>
+      <div style={{ backgroundColor: 'white' }}>
         <select id="cars" onChange={onSelectCategoryFilter}>
-        {
-          categories.map((item: { _id: string, name: string }) => {
-            return <option key={item._id} value={item._id}>{item.name}</option>;
-          })
-        }
-
+          {categories.map((item) => (
+            <option key={item._id} value={item._id}>{item.name}</option>
+          ))}
         </select>
-
-        <button onClick={onSearch}> timf kieems</button>
+        <button onClick={onSearch}>Tìm kiếm</button>
+      </div>
+      <div style={{ backgroundColor: 'white' }}>
+        <select id="cars" onChange={onSelectSupplierFilter}>
+          {suppliers.map((item) => (
+            <option key={item._id} value={item._id}>{item.name}</option>
+          ))}
+        </select>
+        <button onClick={onSearch}>Tìm kiếm</button>
       </div>
       <Table rowKey='id' dataSource={items} columns={columns} pagination={false} />
 
@@ -442,5 +454,7 @@ export default function Categories() {
         </Form>
       </Modal>
     </div>
+    
   );
+  
 }
