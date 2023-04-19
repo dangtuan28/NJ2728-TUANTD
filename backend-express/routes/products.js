@@ -17,7 +17,7 @@ router.get('/', validateSchema(getProductsSchema), async (req, res, next) => {
   try {
     const {
       category,
-      sup,
+      supplier,
       q,
       skip,
       limit,
@@ -32,54 +32,55 @@ router.get('/', validateSchema(getProductsSchema), async (req, res, next) => {
     const conditionFind = {};
 
     if (category) conditionFind.categoryId = category;
-    if (sup) conditionFind.supplierId = sup;
+    if (supplier) conditionFind.supplierId = supplier;
     if (productName) {
       conditionFind.name = new RegExp(`${productName}`)
     }
 
-    if (stockStart & stockEnd) {
-      conditionFind.stock = {
-        $expr: {
-          $and: [
-            { stock: { $gte: Number(stockStart) } },
-            { stock: { $lte: Number(stockEnd) } },
-          ]
-        }
-      }
+    if (stockStart && stockEnd) {
+      conditionFind.stock = { $gte: Number(stockStart), $lte: Number(stockEnd) };
     } else if (stockStart) {
-      conditionFind.stock = {
-        $expr: {
-          $and: [
-            { stock: { $gte: Number(stockStart) } },
-          ]
-        }
-      }
+      conditionFind.stock = { $gte: Number(stockStart) };
     } else if (stockEnd) {
-      conditionFind.stock = {
-        $expr: {
-          $and: [
-            { stock: { $lte: Number(stockEnd) } },
-          ]
-        }
-      }
+      conditionFind.stock = { $lte: Number(stockEnd) };
     }
-
+    //price
+    if (priceStart && priceEnd) {
+      conditionFind.price = { $gte: Number(priceStart), $lte: Number(priceEnd) };
+    } else if (priceStart) {
+      conditionFind.price = { $gte: Number(priceStart) };
+    } else if (priceEnd) {
+      conditionFind.price = { $lte: Number(priceEnd) };
+    }
+    //discount
+    if (discountStart && discountEnd) {
+      conditionFind.discount = { $gte: Number(discountStart), $lte: Number(discountEnd) };
+    } else if (discountStart) {
+      conditionFind.discount = { $gte: Number(discountStart) };
+    } else if (discountEnd) {
+      conditionFind.discount = { $lte: Number(discountEnd) };
+    }
     console.log('««««« conditionFind »»»»»', conditionFind);
 
     let results = await Product
-    .find(conditionFind)
-    .populate('category')
-    .populate('supplier')
-    .skip(skip)
-    .limit(limit)
-    .lean({ virtuals: true });
+      .find(conditionFind)
+      .populate('category')
+      .populate('supplier')
+      .skip(skip)
+      .limit(limit)
+      .lean({ virtuals: true });
 
-    res.json(results);
+    const countAllProduct = await Product.count();
+    res.json({ total: countAllProduct, data: results });
+
   } catch (error) {
     console.log('««««« error »»»»»', error);
     res.status(500).json({ ok: false, error });
   }
 });
+
+
+
 
 // Get by id
 router.get('/:id', async (req, res, next) => {
@@ -90,24 +91,24 @@ router.get('/:id', async (req, res, next) => {
       }),
     }),
   });
-  
+
 
   validationSchema.validate({ params: req.params }, { abortEarly: false })
-  .then(async () => {
-    const { id } = req.params;
-    console.log('««««« id »»»»»', id);
+    .then(async () => {
+      const { id } = req.params;
+      console.log('««««« id »»»»»', id);
 
-    let results = await Product.findById(id).populate('category').populate('supplier').lean({ virtuals: true });
+      let results = await Product.findById(id).populate('category').populate('supplier').lean({ virtuals: true });
 
-    if (results) {
-      return res.send({ ok: true, result: results });
-    }
+      if (results) {
+        return res.send({ ok: true, result: results });
+      }
 
-    return res.send({ ok: false, message: 'Object not found' });
-  })
-  .catch((err) => {
-    return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
-  });
+      return res.send({ ok: false, message: 'Object not found' });
+    })
+    .catch((err) => {
+      return res.status(400).json({ type: err.name, errors: err.errors, message: err.message, provider: 'yup' });
+    });
 });
 
 // ------------------------------------------------------------------------------------------------
